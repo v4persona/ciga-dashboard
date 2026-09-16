@@ -6,7 +6,7 @@ const names: Record<SyncStatus["source"], string> = { shopify: "Shopify", olist:
 
 export function TopBar({ syncs, children }: { syncs: SyncStatus[]; children: React.ReactNode }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-bg/90 backdrop-blur-md">
+    <header className="z-20 md:sticky md:top-0 border-b border-line bg-bg/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1360px] flex-col gap-4 px-4 py-4 sm:px-8">
         <div className="flex items-center justify-between gap-6">
           <div className="flex items-center gap-4">
