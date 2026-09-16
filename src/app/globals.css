@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/* ---- Identidade CIGA (tokens extraídos de wiki.usecigadesign.com.br) ---- */
+:root {
+  color-scheme: dark;
+  --bg: #050505;
+  --bg-alt: #0a0a0a;
+  --card: #0f0f0f;
+  --card-hover: #161616;
+  --text: #ffffff;
+  --text-muted: #a0a0a0;
+  --text-subtle: #6a6a6a;
+  --gold: #c9a962;
+  --gold-light: #e5d4a1;
+  --gold-dim: rgba(201, 169, 98, 0.1);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-gold: rgba(201, 169, 98, 0.3);
+  --blue: #4a9be8;
+  --blue-dim: rgba(74, 155, 232, 0.12);
+  --rose: #c46d7a;
+  --good: #5fb77d;
+  --bad: #e66767;
+  --bad-dim: rgba(230, 103, 103, 0.12);
+  --radius: 4px;
+  --grid: rgba(255, 255, 255, 0.06);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-alt: var(--bg-alt);
+  --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
+  --color-ink: var(--text);
+  --color-muted: var(--text-muted);
+  --color-subtle: var(--text-subtle);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dim: var(--gold-dim);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-line-gold: var(--border-gold);
+  --color-blue: var(--blue);
+  --color-blue-dim: var(--blue-dim);
+  --color-rose: var(--rose);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
+  --color-bad-dim: var(--bad-dim);
+  --font-sans: var(--font-ciga), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-condensed: var(--font-ciga-condensed), var(--font-ciga), "Helvetica Neue", Arial, sans-serif;
+  --radius-sm: 4px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+::selection { background: var(--gold); color: #050505; }
+
+/* números de destaque: condensed bold, como os índices de um mostrador */
+.numeral {
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* marcador de seção: um índice dourado, como o das horas no mostrador */
+.index-mark::before {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--gold);
+  margin-right: 14px;
+  vertical-align: -0.15em;
+}
+
+/* linha fina que atravessa a página entre seções */
+.rule { height: 1px; background: linear-gradient(90deg, var(--border-gold), var(--border) 30%, transparent); }
+
+/* controles */
+.chip {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+  background: transparent;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.chip:hover { color: var(--text); border-color: var(--border-strong); }
+.chip[aria-pressed="true"], .chip[data-active="true"] { color: var(--gold-light); border-color: var(--border-gold); background: var(--gold-dim); }
+.chip:focus-visible, .select:focus-visible, .date:focus-visible, a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.select, .date {
+  appearance: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 6px 32px 6px 12px;
+  font-size: 13px;
+  font-weight: 400;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23a0a0a0' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+.date { padding-right: 12px; background-image: none; color-scheme: dark; }
+
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th { text-align: left; font-weight: 400; color: var(--text-subtle); font-size: 12px; padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.table td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.table tr:last-child td { border-bottom: 0; }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.table tbody tr { transition: background 0.2s; }
+.table tbody tr:hover { background: var(--card-hover); }
+
+.thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 3px; background: #1a1a1a; border: 1px solid var(--border); flex: none; }
+
+.recharts-cartesian-grid line { stroke: var(--grid); }
+.recharts-text { fill: var(--text-muted); font-size: 11px; font-weight: 400; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
