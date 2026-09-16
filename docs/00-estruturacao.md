@@ -1,6 +1,6 @@
 # CIGA Dashboard — Estruturação do projeto
 
-> Documento de partida. Traduz o pedido de "poucas palavras" em escopo, métricas, arquitetura e plano.
+> Documento de partida. Traduz o pedido de projeto em escopo, métricas, arquitetura e plano.
 > Pedido original resumido: **uma página** com Vendas (Shopify), Estoque (Olist), Tráfego pago (Meta/Google),
 > filtros de período e por modelo de relógio, deploy na Vercel ainda esta semana, identidade do wiki.usecigadesign.com.br,
 > dados históricos de uma plataforma antiga (congelados) incorporados ao banco.
