@@ -28,7 +28,7 @@ function journeyFor(r: ReturnType<typeof seeded>, sku: string, created: Date, ag
   const occurredAt = formatISO(addHours(created, -r.int(1, 30)));
   if (!r.chance(0.55)) {
     const source = r.pick(["direct", "google", "instagram", "email"] as const);
-    return { ready: ageDays > 0, momentsCount: r.int(1, 4), firstVisit: null, lastVisit: { occurredAt, source, landingPage: "https://usecigadesign.com.br/", utmParameters: null } };
+    return { ready: ageDays > 0, momentsCount: { count: r.int(1, 4), precision: "EXACT" }, firstVisit: null, lastVisit: { occurredAt, source, landingPage: "https://usecigadesign.com.br/", utmParameters: null } };
   }
   const own = paidCampaigns.filter((p) => p.targets.has(sku) && p.c.status === "active");
   const generic = paidCampaigns.filter((p) => p.targets.size === 0 && p.c.status === "active");
@@ -41,7 +41,7 @@ function journeyFor(r: ReturnType<typeof seeded>, sku: string, created: Date, ag
     landingPage: "https://usecigadesign.com.br/products/" + sku.toLowerCase(),
     utmParameters: { source: meta ? (r.chance(0.5) ? "facebook" : "instagram") : "google", medium: meta ? "paid" : "cpc", campaign: c.name, content: null, term: null },
   };
-  return { ready: ageDays > 0, momentsCount: r.int(1, 6), firstVisit: visit, lastVisit: visit };
+  return { ready: ageDays > 0, momentsCount: { count: r.int(1, 6), precision: "EXACT" }, firstVisit: visit, lastVisit: visit };
 }
 
 function pickSku(r: ReturnType<typeof seeded>) {

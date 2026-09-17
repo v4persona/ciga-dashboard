@@ -35,7 +35,7 @@ CSV legado ─ script de importação ─┘
 |---|---|---|
 | App | **Next.js 15 (App Router) + TypeScript** | Vercel nativo; front e API no mesmo deploy; cron da Vercel para os syncs |
 | UI | **Tailwind 4 + shadcn/ui + Recharts** | Mesma base dos projetos irmãos (mango, influencer); rápido de montar |
-| Banco | **Postgres (Neon)** + **Drizzle ORM** | Integração de 1 clique na Vercel, free tier suficiente, migrations em TS |
+| Banco | **Postgres (Supabase)** + **Drizzle ORM** | Já é o banco usado pela agência; free tier suficiente, migrations em TS. (Neon foi a escolha inicial, trocado em 2026-09-17) |
 | Sync | **Vercel Cron → route handlers** `/api/sync/{shopify,olist,meta,google}` | Sem infra extra. Se algum sync passar de 60s, quebrar em páginas |
 | Auth | Senha única compartilhada (cookie assinado) na v1 | Dashboard interno; troca por login real depois se precisar |
 | Locale | `pt-BR`, `America/Sao_Paulo`, BRL | Todo cálculo de "hoje/mês" no fuso de SP |
@@ -194,7 +194,7 @@ para altas. Fundo escuro pede cuidado com contraste nos gráficos (grid a 6% de 
 
 | Dia | Entrega | Verificável por |
 |---|---|---|
-| 1 | Scaffold Next + Tailwind + shadcn + Drizzle; schema; seed com dados fictícios realistas; deploy Vercel + Neon | URL pública no ar com dados mock |
+| 1 | Scaffold Next + Tailwind + shadcn + Drizzle; schema; seed com dados fictícios realistas; deploy Vercel + Supabase | URL pública no ar com dados mock |
 | 1–2 | Página completa: 4 blocos, filtros de período/modelo/fonte, comparação com período anterior, identidade CIGA | Cliente navega e valida layout/métricas |
 | 2 | Sync Shopify (pedidos, itens, checkouts abandonados, produtos) + cron | Bloco Vendas com dados reais |
 | 3 | Sync Olist (estoque) + alerta; de-para SKU ↔ modelo | Bloco Estoque real |

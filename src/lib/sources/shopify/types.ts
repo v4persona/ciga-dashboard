@@ -7,6 +7,9 @@
 
 export type MoneyBag = { shopMoney: { amount: string; currencyCode: string } };
 
+/** https://shopify.dev/docs/api/admin-graphql/2026-01/objects/Count */
+export type Count = { count: number; precision: "AT_LEAST" | "EXACT" };
+
 export type OrderDisplayFinancialStatus =
   | "AUTHORIZED" | "EXPIRED" | "PAID" | "PARTIALLY_PAID" | "PARTIALLY_REFUNDED"
   | "PENDING" | "REFUNDED" | "VOIDED";
@@ -48,7 +51,7 @@ export type CustomerVisit = {
  */
 export type CustomerJourneySummary = {
   ready: boolean;
-  momentsCount: number | null;
+  momentsCount: Count | null;
   firstVisit: CustomerVisit | null;
   lastVisit: CustomerVisit | null;
 };
@@ -99,7 +102,7 @@ export const ORDERS_QUERY = /* GraphQL */ `
         totalRefundedSet { shopMoney { amount currencyCode } }
         customer { id firstName lastName email }
         customerJourneySummary {
-          ready momentsCount
+          ready momentsCount { count precision }
           firstVisit { occurredAt source landingPage utmParameters { campaign content medium source term } }
           lastVisit { occurredAt source landingPage utmParameters { campaign content medium source term } }
         }

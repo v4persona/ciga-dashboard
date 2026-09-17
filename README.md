@@ -3,8 +3,9 @@
 Painel único de métricas da CIGA design Brasil: vendas (Shopify), estoque (Olist ERP) e tráfego pago (Meta + Google Ads),
 com filtros de período, modelo de relógio e fonte dos dados. Identidade visual do wiki.usecigadesign.com.br.
 
-Documentos de partida: `docs/00-estruturacao.md` (escopo, métricas, plano), `docs/01-identidade-visual.md` (tokens)
-e `docs/02-matriz-do-modelo.md` (cruzamento das três fontes por relógio).
+Documentos de partida: `docs/00-estruturacao.md` (escopo, métricas, plano), `docs/01-identidade-visual.md` (tokens),
+`docs/02-matriz-do-modelo.md` (cruzamento das três fontes por relógio)
+e `docs/03-shopify.md` (criar o app, credenciais e sondagem dos dados reais).
 
 ## Rodar
 
@@ -50,5 +51,5 @@ Cada sync vira uma rota `app/api/sync/<fonte>/route.ts` chamada pelo Vercel Cron
 
 ## Deploy
 
-Projeto padrão Next.js: importar o repositório na Vercel, adicionar a integração Neon (Postgres) quando houver sync,
+Projeto padrão Next.js: importar o repositório na Vercel, apontar `DATABASE_URL` para o Postgres do Supabase (transaction pooler) quando houver sync,
 copiar as variáveis de `.env.example`.
