@@ -1,8 +1,9 @@
 import { addDays, addHours, formatISO, parseISO, differenceInCalendarDays } from "date-fns";
-import { catalog } from "@/lib/catalog";
+import { campaignTargets, catalog } from "@/lib/catalog";
 import { settings } from "@/lib/settings";
 import { seeded } from "@/lib/random";
-import type { MoneyBag, ShopifyAbandonedCheckout, ShopifyOrder } from "./types";
+import { mockCampaigns } from "@/lib/sources/ads/mock";
+import type { CustomerJourneySummary, MoneyBag, ShopifyAbandonedCheckout, ShopifyOrder } from "./types";
 
 const money = (n: number): MoneyBag => ({ shopMoney: { amount: n.toFixed(2), currencyCode: "BRL" } });
 
@@ -14,6 +15,34 @@ const weights = catalog.map((c) =>
   c.collection === "Blue Planet" ? 5 : c.collection === "Hunter" ? 4 : c.collection === "Aventur" ? 2 : 3,
 );
 const totalWeight = weights.reduce((a, b) => a + b, 0);
+
+/** campanhas de mídia com os modelos que anunciam, para simular a jornada com UTM */
+const paidCampaigns = mockCampaigns.map((c) => ({ c, targets: new Set(campaignTargets(c.name).map((t) => t.sku)) }));
+
+/**
+ * Simula `customerJourneySummary`: ~55% dos pedidos Shopify chegam por mídia paga com UTM
+ * (utm_campaign = nome da campanha); o resto é orgânico/direto. A campanha do próprio modelo
+ * é a mais provável; senão uma campanha genérica (Shopping, PMax, Search).
+ */
+function journeyFor(r: ReturnType<typeof seeded>, sku: string, created: Date, ageDays: number): CustomerJourneySummary {
+  const occurredAt = formatISO(addHours(created, -r.int(1, 30)));
+  if (!r.chance(0.55)) {
+    const source = r.pick(["direct", "google", "instagram", "email"] as const);
+    return { ready: ageDays > 0, momentsCount: r.int(1, 4), firstVisit: null, lastVisit: { occurredAt, source, landingPage: "https://usecigadesign.com.br/", utmParameters: null } };
+  }
+  const own = paidCampaigns.filter((p) => p.targets.has(sku) && p.c.status === "active");
+  const generic = paidCampaigns.filter((p) => p.targets.size === 0 && p.c.status === "active");
+  const pool = own.length && r.chance(0.6) ? own : generic;
+  const { c } = r.pick(pool);
+  const meta = c.platform === "meta";
+  const visit = {
+    occurredAt,
+    source: meta ? "facebook" : "google",
+    landingPage: "https://usecigadesign.com.br/products/" + sku.toLowerCase(),
+    utmParameters: { source: meta ? (r.chance(0.5) ? "facebook" : "instagram") : "google", medium: meta ? "paid" : "cpc", campaign: c.name, content: null, term: null },
+  };
+  return { ready: ageDays > 0, momentsCount: r.int(1, 6), firstVisit: visit, lastVisit: visit };
+}
 
 function pickSku(r: ReturnType<typeof seeded>) {
   let x = r.next() * totalWeight;
@@ -87,6 +116,7 @@ export function generateOrders(today: Date, days = 260): ShopifyOrder[] {
         totalRefundedSet: money(refunded),
         customer: { id: `gid://shopify/Customer/${seq * 7}`, firstName: fn, lastName: ln, email: `${fn.toLowerCase()}.${ln.toLowerCase()}@example.com` },
         lineItems: { nodes },
+        customerJourneySummary: legacy ? null : journeyFor(r, nodes[0].sku, created, ageDays),
         source: legacy ? "legacy" : "shopify",
       });
       seq++;

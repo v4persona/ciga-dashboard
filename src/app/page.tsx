@@ -7,6 +7,7 @@ import { settings } from "@/lib/settings";
 import { byModel, cartsToRecover, dailySeries, modelOptions, summarize } from "@/lib/metrics/sales";
 import { stockRows } from "@/lib/metrics/stock";
 import { summarizeAds } from "@/lib/metrics/ads";
+import { modelMatrix } from "@/lib/metrics/matrix";
 import { delta, fmtBRL, fmtBRLCents, fmtNum, fmtPct, fmtX } from "@/lib/format";
 import { TopBar } from "@/components/TopBar";
 import { FilterBar } from "@/components/FilterBar";
@@ -19,6 +20,7 @@ import { CartsTable } from "@/components/CartsTable";
 import { StockTable } from "@/components/StockTable";
 import { SpendChart } from "@/components/SpendChart";
 import { CampaignsTable } from "@/components/CampaignsTable";
+import { ModelMatrix } from "@/components/ModelMatrix";
 import { bySku } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +48,9 @@ export default async function Page({ searchParams }: PageProps<"/">) {
   // ---- tráfego pago
   const ads = summarizeAds(data.campaigns, data.adDaily, f, cur.gross, cur.orders);
   const prevAdsMer = ads.prev.spend ? prev.gross / ads.prev.spend : 0;
+
+  // ---- matriz do modelo: as três fontes cruzadas por relógio
+  const matrix = modelMatrix(data.orders, stock, data.campaigns, data.adDaily, f);
 
   const periodText = `${format(f.from, "d MMM", { locale: ptBR })} – ${format(f.to, "d MMM yyyy", { locale: ptBR })}`;
   const modelName = f.model === "todos" ? null : bySku.get(f.model)?.model ?? f.model;
@@ -187,6 +192,15 @@ export default async function Page({ searchParams }: PageProps<"/">) {
             <div className="mt-3">
               <CampaignsTable rows={ads.campaigns} bestId={ads.best?.id} />
             </div>
+          </Section>
+
+          {/* ------------------------------------------------ MATRIZ DO MODELO */}
+          <Section
+            id="matriz"
+            title="Matriz do modelo"
+            description="Vendas, estoque e mídia lado a lado, por relógio. Campanhas são ligadas ao modelo pelo nome; pedidos são ligados à campanha pela UTM da visita que converteu. Os sinais apontam onde há uma decisão a tomar."
+          >
+            <ModelMatrix matrix={matrix} highlight={f.model} />
           </Section>
         </div>
       </main>

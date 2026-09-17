@@ -24,6 +24,35 @@ export type ShopifyLineItem = {
   discountedTotalSet: MoneyBag;
 };
 
+/** Parâmetros UTM da visita — https://shopify.dev/docs/api/admin-graphql/2026-01/objects/UTMParameters */
+export type UTMParameters = {
+  campaign: string | null;
+  content: string | null;
+  medium: string | null;
+  source: string | null;
+  term: string | null;
+};
+
+/** https://shopify.dev/docs/api/admin-graphql/2026-01/objects/CustomerVisit */
+export type CustomerVisit = {
+  occurredAt: string;
+  source: string;                 // ex.: "facebook", "google", "direct"
+  landingPage: string | null;
+  utmParameters: UTMParameters | null;
+};
+
+/**
+ * Jornada do cliente até o pedido. `ready = false` quando a Shopify ainda não processou a atribuição
+ * (acontece nas primeiras horas). `lastVisit` é a visita que converteu; é a que usamos para ligar
+ * pedido ↔ campanha. https://shopify.dev/docs/api/admin-graphql/2026-01/objects/CustomerJourneySummary
+ */
+export type CustomerJourneySummary = {
+  ready: boolean;
+  momentsCount: number | null;
+  firstVisit: CustomerVisit | null;
+  lastVisit: CustomerVisit | null;
+};
+
 export type ShopifyOrder = {
   id: string;            // gid://shopify/Order/123
   name: string;          // "#1001"
@@ -37,6 +66,8 @@ export type ShopifyOrder = {
   totalRefundedSet: MoneyBag;
   customer: { id: string; firstName: string | null; lastName: string | null; email: string | null } | null;
   lineItems: { nodes: ShopifyLineItem[] };
+  /** null para pedidos da plataforma antiga (sem jornada rastreada) */
+  customerJourneySummary: CustomerJourneySummary | null;
   /**
    * Campo próprio (não existe na Shopify): origem do registro.
    * 'legacy' = importado da plataforma antiga com o mesmo formato.
@@ -67,6 +98,11 @@ export const ORDERS_QUERY = /* GraphQL */ `
         totalDiscountsSet { shopMoney { amount currencyCode } }
         totalRefundedSet { shopMoney { amount currencyCode } }
         customer { id firstName lastName email }
+        customerJourneySummary {
+          ready momentsCount
+          firstVisit { occurredAt source landingPage utmParameters { campaign content medium source term } }
+          lastVisit { occurredAt source landingPage utmParameters { campaign content medium source term } }
+        }
         lineItems(first: 50) {
           nodes {
             id sku title quantity

@@ -34,6 +34,10 @@ export const orders = pgTable("orders", {
   customerId: text("customer_id"),
   customerName: text("customer_name"),
   customerEmail: text("customer_email"),
+  // customerJourneySummary.lastVisit.utmParameters — liga pedido ↔ campanha de mídia
+  utmSource: text("utm_source"),
+  utmMedium: text("utm_medium"),
+  utmCampaign: text("utm_campaign"),
   raw: text("raw"),                                   // JSON original, para reprocessar
 });
 

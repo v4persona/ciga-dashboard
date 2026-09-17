@@ -49,3 +49,26 @@ export const catalog: CatalogItem[] = [
 
 export const bySku = new Map(catalog.map((c) => [c.sku, c]));
 export const collections: Collection[] = ["Blue Planet", "Hunter", "Everest", "Zodiac", "Skeleton", "Aventur", "Edge"];
+
+const tokens = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(Boolean);
+
+/**
+ * Resolve o nome de uma campanha para os modelos que ela anuncia, pela convenção de nome da CIGA
+ * (campanhas nomeadas por modelo). Para cada modelo conta quantos tokens iniciais do nome aparecem
+ * na campanha; vencem os modelos com a maior contagem.
+ *   "Hunter — Lançamento Titanium"  → [Hunter Titanium]
+ *   "Blue Planet II — Conversão"    → [BP II Atlantic, BP II Black Star, BP II Gilded Age]
+ *   "Performance Max — Relógios"    → []  (genérica: anuncia o catálogo todo)
+ */
+export function campaignTargets(campaignName: string): CatalogItem[] {
+  const words = new Set(tokens(campaignName));
+  let best = 0;
+  const scored = catalog.map((c) => {
+    const t = tokens(c.model);
+    let k = 0;
+    while (k < t.length && words.has(t[k])) k++;
+    best = Math.max(best, k);
+    return { c, k };
+  });
+  return best === 0 ? [] : scored.filter((s) => s.k === best).map((s) => s.c);
+}

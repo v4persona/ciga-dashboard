@@ -3,7 +3,8 @@
 Painel único de métricas da CIGA design Brasil: vendas (Shopify), estoque (Olist ERP) e tráfego pago (Meta + Google Ads),
 com filtros de período, modelo de relógio e fonte dos dados. Identidade visual do wiki.usecigadesign.com.br.
 
-Documentos de partida: `docs/00-estruturacao.md` (escopo, métricas, plano) e `docs/01-identidade-visual.md` (tokens).
+Documentos de partida: `docs/00-estruturacao.md` (escopo, métricas, plano), `docs/01-identidade-visual.md` (tokens)
+e `docs/02-matriz-do-modelo.md` (cruzamento das três fontes por relógio).
 
 ## Rodar
 
@@ -20,14 +21,14 @@ Copie `.env.example` para `.env.local` quando for ligar as fontes reais.
 
 ```
 src/app/page.tsx              página única (server component). Lê filtros da URL, calcula métricas, renderiza.
-src/components/               FilterBar, Kpi, RevenueChart, SpendChart, StockTable, CampaignsTable, …
+src/components/               FilterBar, Kpi, RevenueChart, SpendChart, StockTable, CampaignsTable, ModelMatrix, …
 src/lib/filters.ts            período (hoje/7d/30d/mês/mês anterior/custom), modelo, fonte. Comparação com período anterior.
-src/lib/metrics/{sales,stock,ads}.ts   funções puras: tipos de origem → números do painel
+src/lib/metrics/{sales,stock,ads,matrix}.ts   funções puras: tipos de origem → números do painel
 src/lib/sources/shopify/      types.ts = subconjunto do Admin GraphQL 2026-01 (nomes idênticos) + queries prontas
 src/lib/sources/olist/        types.ts = Olist ERP API v3 (/produtos, /estoque/{id}), nomes em pt como na API
 src/lib/sources/ads/          Meta Insights e Google Ads (GAQL) → linha normalizada `AdDaily` (campanha × dia)
 src/lib/sources/index.ts      getDashboardData(): hoje mock, depois Postgres. O front só conhece essa função.
-src/lib/catalog.ts            de-para SKU → modelo / coleção / imagem (chave de junção entre todas as fontes)
+src/lib/catalog.ts            de-para SKU → modelo / coleção / imagem (chave de junção entre todas as fontes) e nome de campanha → modelo
 src/lib/settings.ts           mínimo de estoque (5), data de corte da plataforma antiga, janela de carrinhos, etc.
 src/db/schema.ts              Drizzle/Postgres espelhando os tipos acima (syncs gravam, painel lê)
 ```
