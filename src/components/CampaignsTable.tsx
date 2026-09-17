@@ -1,16 +1,39 @@
+"use client";
 import { fmtBRL, fmtBRLCents, fmtNum, fmtPct, fmtX } from "@/lib/format";
 import type { CampaignRow } from "@/lib/metrics/ads";
+import { Th, useSort, type Accessors } from "./sortable";
+
+type Key = "name" | "status" | "spend" | "share" | "clicks" | "ctr" | "cpc" | "purchases" | "revenue" | "roas";
+const statusRank = { active: 0, paused: 1, ended: 2 } as const;
+const accessors: Accessors<CampaignRow, Key> = {
+  name: (c) => c.name, status: (c) => statusRank[c.status], spend: (c) => c.spend, share: (c) => c.share, clicks: (c) => c.clicks,
+  ctr: (c) => c.ctr, cpc: (c) => c.cpc, purchases: (c) => c.purchases, revenue: (c) => c.revenue, roas: (c) => (c.purchases ? c.roas : null),
+};
 
 const status = { active: ["Ativa", "text-good"], paused: ["Pausada", "text-muted"], ended: ["Encerrada", "text-subtle"] } as const;
 
 export function CampaignsTable({ rows, bestId }: { rows: CampaignRow[]; bestId?: string }) {
+  const { sorted, sort, toggle } = useSort(rows, accessors, { key: "spend", dir: "desc" });
   return (
     <div className="card overflow-hidden">
       <div className="overflow-auto">
         <table className="table">
-          <thead><tr><th>Campanha</th><th>Status</th><th className="num">Gasto</th><th className="num">% do gasto</th><th className="num">Cliques</th><th className="num">CTR</th><th className="num">CPC</th><th className="num">Compras</th><th className="num">Receita</th><th className="num">ROAS</th></tr></thead>
+          <thead>
+            <tr>
+              <Th label="Campanha" sortKey="name" sort={sort} onSort={toggle} />
+              <Th label="Status" sortKey="status" sort={sort} onSort={toggle} />
+              <Th label="Gasto" sortKey="spend" sort={sort} onSort={toggle} num />
+              <Th label="% do gasto" sortKey="share" sort={sort} onSort={toggle} num />
+              <Th label="Cliques" sortKey="clicks" sort={sort} onSort={toggle} num />
+              <Th label="CTR" sortKey="ctr" sort={sort} onSort={toggle} num />
+              <Th label="CPC" sortKey="cpc" sort={sort} onSort={toggle} num />
+              <Th label="Compras" sortKey="purchases" sort={sort} onSort={toggle} num />
+              <Th label="Receita" sortKey="revenue" sort={sort} onSort={toggle} num />
+              <Th label="ROAS" sortKey="roas" sort={sort} onSort={toggle} num />
+            </tr>
+          </thead>
           <tbody>
-            {rows.map((c) => (
+            {sorted.map((c) => (
               <tr key={c.id} className={c.id === bestId ? "bg-gold-dim" : ""}>
                 <td>
                   <div className="flex items-center gap-2">

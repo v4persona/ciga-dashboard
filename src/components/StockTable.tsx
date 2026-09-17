@@ -1,18 +1,37 @@
+"use client";
 import { levelLabels, type StockRow } from "@/lib/metrics/stock";
+import { Th, useSort, type Accessors } from "./sortable";
+
+type Key = "model" | "collection" | "saldo" | "reservado" | "disponivel" | "cover" | "level";
+const levelRank = { critico: 0, atencao: 1, ok: 2 } as const;
+const accessors: Accessors<StockRow, Key> = {
+  model: (r) => r.model, collection: (r) => r.collection, saldo: (r) => r.saldo, reservado: (r) => r.reservado,
+  disponivel: (r) => r.disponivel, cover: (r) => r.daysOfCover, level: (r) => levelRank[r.level],
+};
 
 const tone = { critico: "text-bad", atencao: "text-gold", ok: "text-muted" } as const;
 const bar = { critico: "bg-bad", atencao: "bg-gold", ok: "bg-transparent" } as const;
 
 export function StockTable({ rows, min, highlight }: { rows: StockRow[]; min: number; highlight: string }) {
+  const { sorted, sort, toggle } = useSort(rows, accessors);
   return (
     <div className="card overflow-hidden">
       <div className="max-h-[560px] overflow-auto">
         <table className="table">
           <thead className="sticky top-0 bg-card">
-            <tr><th className="w-1 p-0" /><th>Modelo</th><th>Coleção</th><th className="num">Em estoque</th><th className="num">Reservado</th><th className="num">Disponível</th><th className="num">Cobertura</th><th>Status</th></tr>
+            <tr>
+              <th className="w-1 p-0" />
+              <Th label="Modelo" sortKey="model" sort={sort} onSort={toggle} />
+              <Th label="Coleção" sortKey="collection" sort={sort} onSort={toggle} />
+              <Th label="Em estoque" sortKey="saldo" sort={sort} onSort={toggle} num />
+              <Th label="Reservado" sortKey="reservado" sort={sort} onSort={toggle} num />
+              <Th label="Disponível" sortKey="disponivel" sort={sort} onSort={toggle} num />
+              <Th label="Cobertura" sortKey="cover" sort={sort} onSort={toggle} num />
+              <Th label="Status" sortKey="level" sort={sort} onSort={toggle} />
+            </tr>
           </thead>
           <tbody>
-            {rows.map((r) => {
+            {sorted.map((r) => {
               const dim = highlight !== "todos" && highlight !== r.sku;
               return (
                 <tr key={r.sku} className={dim ? "opacity-40" : ""}>
