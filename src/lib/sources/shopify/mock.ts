@@ -1,5 +1,5 @@
 import { addDays, addHours, formatISO, parseISO, differenceInCalendarDays } from "date-fns";
-import { campaignTargets, catalog } from "@/lib/catalog";
+import { campaignTargets, catalog, type Collection } from "@/lib/catalog";
 import { settings } from "@/lib/settings";
 import { seeded } from "@/lib/random";
 import { mockCampaigns } from "@/lib/sources/ads/mock";
@@ -10,10 +10,9 @@ const money = (n: number): MoneyBag => ({ shopMoney: { amount: n.toFixed(2), cur
 const firstNames = ["Ana", "Bruno", "Carla", "Diego", "Eduarda", "Felipe", "Gabriela", "Henrique", "Isabela", "João", "Larissa", "Marcos", "Natália", "Otávio", "Paula", "Rafael", "Sofia", "Thiago", "Vitória", "William"];
 const lastNames = ["Silva", "Souza", "Oliveira", "Pereira", "Costa", "Rodrigues", "Almeida", "Nascimento", "Lima", "Araújo", "Ferreira", "Carvalho", "Gomes", "Martins", "Ribeiro"];
 
-/** Peso de venda por modelo: Blue Planet e Hunter puxam a maior parte da receita. */
-const weights = catalog.map((c) =>
-  c.collection === "Blue Planet" ? 5 : c.collection === "Hunter" ? 4 : c.collection === "Aventur" ? 2 : 3,
-);
+/** Peso de venda por item: Edge e pulseiras giram mais; Everest e Zodiac, de ticket alto, vendem pouco. */
+const collectionWeight: Record<Collection, number> = { Edge: 4, "Acessórios": 4, Outros: 3, Aventur: 2, Everest: 1, Zodiac: 1 };
+const weights = catalog.map((c) => collectionWeight[c.collection]);
 const totalWeight = weights.reduce((a, b) => a + b, 0);
 
 /** campanhas de mídia com os modelos que anunciam, para simular a jornada com UTM */

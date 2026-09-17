@@ -5,7 +5,7 @@ import type { AdCampaign, AdDaily } from "./types";
 export const mockCampaigns: AdCampaign[] = [
   { id: "meta:1201", platform: "meta", externalId: "1201", name: "Blue Planet II — Conversão", status: "active", objective: "OUTCOME_SALES" },
   { id: "meta:1202", platform: "meta", externalId: "1202", name: "Remarketing — Carrinho", status: "active", objective: "OUTCOME_SALES" },
-  { id: "meta:1203", platform: "meta", externalId: "1203", name: "Hunter — Lançamento Titanium", status: "active", objective: "OUTCOME_SALES" },
+  { id: "meta:1203", platform: "meta", externalId: "1203", name: "Hunter Tourbillon — Lançamento", status: "active", objective: "OUTCOME_SALES" },
   { id: "meta:1204", platform: "meta", externalId: "1204", name: "Reconhecimento — Vídeo GPHG", status: "paused", objective: "OUTCOME_AWARENESS" },
   { id: "google:8801", platform: "google", externalId: "8801", name: "Search — Marca CIGA", status: "active", objective: "SEARCH" },
   { id: "google:8802", platform: "google", externalId: "8802", name: "Shopping — Catálogo", status: "active", objective: "SHOPPING" },

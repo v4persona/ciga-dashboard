@@ -15,6 +15,11 @@ Pivot só existe onde há dimensão compartilhada. As três fontes se ligam por 
 
 Confirmado com o cliente em 2026-09-17: campanhas são nomeadas por modelo e os anúncios usam UTM nos links.
 
+> ⚠ **Revisto após a sondagem da Shopify (2026-09-17)**: a única campanha com UTM nos pedidos reais é
+> `CA01 - VENDAS SETEMBRO | CBO | BR`, sem modelo no nome. A heurística de nome continua valendo só para o mock.
+> Como ligar campanha a relógio (conjunto/anúncio, `utm_content`, página de entrada) fica para depois das
+> conexões com Meta e Google, quando der para ver a estrutura real das contas.
+
 ### Como o nome vira modelo
 
 Para cada modelo do catálogo, conta-se quantos tokens iniciais do nome aparecem no nome da campanha.

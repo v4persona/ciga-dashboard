@@ -70,8 +70,10 @@ se um falhar (ex.: escopo faltando), os outros seguem.
 
 ## 4. O que esperar e o que fazer com o resultado
 
-- **SKUs**: os SKUs de `catalog.ts` foram escritos para o mock (`CIGA-HUN-TB`…). É provável que a loja use outros.
-  A lista de variantes da sondagem é o insumo para reescrever o catálogo com os SKUs reais.
+- **SKUs**: o catálogo vem da própria loja. `npm run shopify:catalog` lê os produtos ativos e grava
+  `src/lib/catalog.generated.ts` (SKU `JG…`, nome, referência CIGA, preço, imagem). Coleção = tag da loja
+  (`AVENTUR`, `EDGE`, `EVEREST`, `ZODIAC`, `outros`); pulseiras (tag `Straps`) vão para **Acessórios**.
+  Rodar de novo quando a loja mudar produtos.
 - **Status**: se aparecerem status que `src/lib/metrics/sales.ts` não classifica (ex.: `PARTIALLY_PAID`,
   `ON_HOLD`), decidir em qual grupo entram (finalizadas / em processo).
 - **UTMs**: `utm_source` fora de `settings.utmSources` indica pedido de mídia paga que a matriz do modelo não vai

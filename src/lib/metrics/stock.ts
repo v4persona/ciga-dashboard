@@ -24,18 +24,18 @@ export function stockRows(snapshots: StockSnapshot[], unitsLast30: Map<string, n
   const order: Record<StockLevel, number> = { critico: 0, atencao: 1, ok: 2 };
   return snapshots
     .map((s) => {
-      const c = bySku.get(s.produto.sku);
-      const daily = (unitsLast30.get(s.produto.sku) ?? 0) / 30;
+      const c = bySku.get(s.sku);
+      const daily = (unitsLast30.get(s.sku) ?? 0) / 30;
       return {
-        sku: s.produto.sku,
-        model: c?.model ?? s.produto.descricao,
+        sku: s.sku,
+        model: c?.model ?? s.nome,
         collection: c?.collection ?? "—",
         image: c?.image ?? "",
-        saldo: s.estoque.saldo,
-        reservado: s.estoque.reservado,
-        disponivel: s.estoque.disponivel,
-        level: stockLevel(s.estoque.disponivel),
-        daysOfCover: daily > 0 ? Math.round(s.estoque.disponivel / daily) : null,
+        saldo: s.saldo,
+        reservado: s.reservado,
+        disponivel: s.disponivel,
+        level: stockLevel(s.disponivel),
+        daysOfCover: daily > 0 ? Math.round(s.disponivel / daily) : null,
       };
     })
     .sort((a, b) => order[a.level] - order[b.level] || a.disponivel - b.disponivel || a.model.localeCompare(b.model));

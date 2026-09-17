@@ -2,8 +2,8 @@
 export const settings = {
   /** mínimo em estoque; abaixo disso é crítico, igual é atenção */
   stockMin: 5,
-  /** data em que a loja passou a operar na Shopify; antes disso, dados da plataforma antiga */
-  cutoverDate: "2026-06-01",
+  /** data em que a loja passou a operar na Shopify (primeiro pedido, confirmada com o cliente); antes disso, plataforma antiga */
+  cutoverDate: "2026-08-27",
   legacyPlatformName: "plataforma antiga",
   /** janela para considerar um checkout abandonado "recuperável" */
   abandonedCartWindowDays: 14,

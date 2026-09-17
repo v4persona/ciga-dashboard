@@ -64,7 +64,7 @@ export const abandonedCheckouts = pgTable("abandoned_checkouts", {
   lineItems: text("line_items").notNull(),            // JSON [{sku,title,quantity}]
 });
 
-/** Olist /estoque/{id} — uma linha por SKU por sync (histórico de posição) */
+/** Olist produto.obter.estoque (API v2) — uma linha por SKU por sync (histórico de posição) */
 export const stockSnapshots = pgTable("stock_snapshots", {
   sku: text("sku").notNull(),
   capturedAt: timestamp("captured_at", { withTimezone: true }).notNull(),
@@ -72,6 +72,7 @@ export const stockSnapshots = pgTable("stock_snapshots", {
   nome: text("nome").notNull(),
   saldo: numeric("saldo", { precision: 12, scale: 3 }).notNull(),
   reservado: numeric("reservado", { precision: 12, scale: 3 }).notNull(),
+  /** saldo − reservado; a v2 não devolve pronto */
   disponivel: numeric("disponivel", { precision: 12, scale: 3 }).notNull(),
   depositos: text("depositos"),                       // JSON
 }, (t) => [primaryKey({ columns: [t.sku, t.capturedAt] })]);
