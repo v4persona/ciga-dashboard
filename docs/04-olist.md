@@ -46,12 +46,20 @@ Limite por minuto depende do plano (30 a 120); o cliente lê o header `x-limit-a
 Ler o estoque dos 94 SKUs leva alguns minutos no plano mais baixo — no sync, `lista.atualizacoes.estoque`
 (só o que mudou desde uma data) evita varrer tudo a cada rodada.
 
-## 3. O que decidir com o resultado
+## 3. Resultado da sondagem e decisões (2026-09-17)
 
-- **SKU diferente entre Shopify e Olist**: a junção quebra. Corrigir no cadastro (melhor) ou criar de-para.
-- **Depósitos**: se houver mais de um, decidir se o painel soma todos ou só o da loja.
-- **Saldo ou disponível** para o alerta (pergunta 4 da estruturação): o painel hoje usa o disponível.
-- **Disponível negativo**: acontece quando o reservado passa o saldo; decidir se vira zero na tela.
+- **SKU**: 94 de 94 do catálogo existem na Olist com o mesmo `codigo`. A junção funciona sem de-para.
+- **A conta é da importadora**: 854 produtos, 621 ativos de outras marcas (Joog). O sync **filtra pelos SKUs do
+  catálogo**. Os códigos repetidos que existem são todos de produtos Joog ou sem código.
+- **Depósitos** — decidido: **somar os dois** (WSI e Nova-SC). É o que o campo `saldo` da Olist já faz;
+  "Avarias" fica de fora porque a própria Olist o marca como desconsiderado.
+- **Mínimo de estoque** — decidido: **5 para todos**, por enquanto (`settings.stockMin`). Rever depois:
+  1 peça de um relógio de R$ 27 mil não é a mesma urgência que 1 pulseira. A coluna de cobertura em dias
+  já é uma alternativa ao número fixo.
+- **Alerta usa o disponível** (`saldo − saldoReservado`), não o saldo: 39 dos 94 SKUs têm reserva, às vezes
+  quase toda a peça disponível. Responde a pergunta 4 do §9 da estruturação.
+- **Saldo negativo** — decidido: **mostrar como está**, sem virar zero. Aparece quando o cadastro na Olist está
+  furado (foi o caso de Blue Planet II Gilded Age e Eastern Jade Black) e o painel serve para expor isso.
 
 ## 4. Caminho alternativo: API v3 (OAuth2)
 

@@ -1,6 +1,10 @@
 /** Parâmetros de negócio. Em produção viram a tabela `settings`; aqui são os defaults. */
 export const settings = {
-  /** mínimo em estoque; abaixo disso é crítico, igual é atenção */
+  /**
+   * mínimo em disponível (saldo − reservado); abaixo disso é crítico, igual é atenção.
+   * Cliente confirmou 5 para todos os itens em 2026-09-17, incluindo acessórios; rever se a diferença
+   * entre relógio de ticket alto e pulseira incomodar (ver docs/04-olist.md §3).
+   */
   stockMin: 5,
   /** data em que a loja passou a operar na Shopify (primeiro pedido, confirmada com o cliente); antes disso, plataforma antiga */
   cutoverDate: "2026-08-27",

@@ -212,7 +212,7 @@ Olist, Meta, e Google por último porque depende de aprovação externa.
 1. **Acessos** — quem cria: app custom Shopify (com `read_all_orders`), token API Olist, System User Meta (ID da conta de anúncios), developer token Google Ads (ou conta MCC existente com token aprovado?).
 2. **Plataforma antiga** — qual é, e existe exportação de pedidos com itens e datas? Data exata da troca.
 3. **Carrinhos a recuperar** — janela de dias (sugestão 14) e se querem a lista com link de recuperação.
-4. **Estoque** — alerta considera saldo total ou saldo disponível (menos reservado)?
+4. ~~**Estoque** — alerta considera saldo total ou saldo disponível (menos reservado)?~~ Respondido em 2026-09-17: **disponível** (saldo − reservado), mínimo 5 para todos, somando os depósitos WSI e Nova-SC. Saldo negativo aparece como está. Ver docs/04-olist.md §3.
 5. **Melhor campanha** — gasto mínimo para entrar no ranking (sugestão R$ 100 no período).
 6. **Acesso ao painel** — senha única compartilhada serve para a v1?
 7. **Fuso/moeda** — assumindo São Paulo e BRL. Há venda internacional em outra moeda?
