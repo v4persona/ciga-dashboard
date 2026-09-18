@@ -118,6 +118,12 @@ export const ORDERS_QUERY = /* GraphQL */ `
   }
 `;
 
+/** Sessões da loja por dia, via ShopifyQL (`shopifyqlQuery`, escopo read_reports). */
+export type SessionDaily = { date: string; sessions: number };
+
+export const SESSIONS_QUERY = (since: string) =>
+  `FROM sessions SHOW sessions TIMESERIES day SINCE ${since} UNTIL today`;
+
 export const ABANDONED_CHECKOUTS_QUERY = /* GraphQL */ `
   query AbandonedCheckouts($first: Int!, $after: String, $query: String) {
     abandonedCheckouts(first: $first, after: $after, query: $query) {

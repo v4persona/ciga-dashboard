@@ -10,7 +10,8 @@
     "shopify:probe": "tsx --env-file=.env.local scripts/shopify-probe.ts",
     "shopify:catalog": "tsx --env-file=.env.local scripts/shopify-catalog.ts",
     "olist:auth": "tsx --env-file=.env.local scripts/olist-auth.ts",
-    "olist:probe": "tsx --env-file=.env.local scripts/olist-probe.ts"
+    "olist:probe": "tsx --env-file=.env.local scripts/olist-probe.ts",
+    "pull": "tsx --env-file=.env.local scripts/pull.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

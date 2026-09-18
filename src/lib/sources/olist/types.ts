@@ -51,6 +51,9 @@ export type OlistProdutoEstoque = {
   depositos: { deposito: OlistDeposito }[];
 };
 
+/** Produto da Olist que também está no catálogo da Shopify — serve para comparar o cadastro das duas fontes. */
+export type OlistCatalogItem = { id: number; codigo: string; nome: string; situacao: string; preco: number };
+
 /** Posição de estoque de um SKU no momento do sync, já normalizada para o painel. */
 export type StockSnapshot = {
   capturedAt: string;

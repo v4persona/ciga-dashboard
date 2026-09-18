@@ -20,6 +20,11 @@ export const settings = {
   attributionInflationRatio: 2,
   /** valores de utm_source que identificam cada plataforma de mídia */
   utmSources: { meta: ["facebook", "instagram", "meta", "fb", "ig"], google: ["google", "adwords", "googleads"] },
+  /**
+   * Meta e Google entram na fase 2 (decidido com o cliente em 2026-09-17). Enquanto isso os blocos
+   * de Tráfego pago e Matriz do modelo saem da tela, porque só teriam dados de exemplo.
+   */
+  showPaidMedia: false,
   timeZone: "America/Sao_Paulo",
   currency: "BRL",
 } as const;

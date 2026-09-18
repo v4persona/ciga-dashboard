@@ -58,7 +58,7 @@ export default async function Page({ searchParams }: PageProps<"/">) {
 
   return (
     <>
-      <TopBar syncs={data.syncs}>
+      <TopBar syncs={data.syncs} current="/">
         <Suspense>
           <FilterBar period={f.period} from={isoDay(f.from)} to={isoDay(f.to)} model={f.model} source={f.source} models={modelOptions} />
         </Suspense>
@@ -148,60 +148,65 @@ export default async function Page({ searchParams }: PageProps<"/">) {
             <StockTable rows={stock} min={settings.stockMin} highlight={f.model} />
           </Section>
 
-          {/* ------------------------------------------------ TRÁFEGO PAGO */}
-          <Section id="trafego" title="Tráfego pago" description="Meta e Google somados. MER é a receita da loja dividida pelo gasto total: a leitura mais honesta de retorno, porque não depende da atribuição de cada plataforma.">
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-              <Kpi label="Gasto total" value={fmtBRL(ads.total.spend)} delta={delta(ads.total.spend, ads.prev.spend)} invert sub={<span>Meta {fmtBRL(ads.byPlatform.meta.spend)} · Google {fmtBRL(ads.byPlatform.google.spend)}</span>} />
-              <Kpi label="MER" value={ads.total.spend ? fmtX(ads.mer) : "—"} delta={delta(ads.mer, prevAdsMer)} accent sub={<span>receita ÷ gasto</span>} />
-              <Kpi label="ROAS atribuído" value={ads.total.purchases ? fmtX(ads.total.roas) : "—"} delta={delta(ads.total.roas, ads.prev.roas)} sub={<span>{fmtNum(ads.total.purchases)} compras · {fmtBRL(ads.total.revenue)}</span>} />
-              <Kpi label="Custo por pedido" value={cur.orders ? fmtBRL(ads.cac) : "—"} delta={delta(ads.cac, ads.prev.spend && prev.orders ? ads.prev.spend / prev.orders : 0)} invert sub={<span>gasto ÷ pedidos da loja</span>} />
-              <Kpi label="Campanhas ativas" value={String(ads.activeCampaigns)} sub={<span>CTR {fmtPct(ads.total.ctr)} · CPC {fmtBRLCents(ads.total.cpc)}</span>} />
-            </div>
-
-            <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-5">
-              <div className="card p-5 lg:col-span-3">
-                <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-base font-normal text-ink">Gasto por dia</h3>
-                  <ul className="flex items-center gap-4 text-xs text-muted" aria-label="Legenda">
-                    <li className="flex items-center gap-2"><span aria-hidden className="inline-block h-2.5 w-2.5 rounded-[2px] bg-blue" />Meta</li>
-                    <li className="flex items-center gap-2"><span aria-hidden className="inline-block h-2.5 w-2.5 rounded-[2px] bg-gold" />Google</li>
-                  </ul>
-                </div>
-                <SpendChart data={ads.daily} />
+          {/* Meta e Google entram na fase 2; sem dados reais, os blocos ficam fora da tela (settings.showPaidMedia) */}
+          {settings.showPaidMedia && (
+            <>
+            {/* ------------------------------------------------ TRÁFEGO PAGO */}
+            <Section id="trafego" title="Tráfego pago" description="Meta e Google somados. MER é a receita da loja dividida pelo gasto total: a leitura mais honesta de retorno, porque não depende da atribuição de cada plataforma.">
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+                <Kpi label="Gasto total" value={fmtBRL(ads.total.spend)} delta={delta(ads.total.spend, ads.prev.spend)} invert sub={<span>Meta {fmtBRL(ads.byPlatform.meta.spend)} · Google {fmtBRL(ads.byPlatform.google.spend)}</span>} />
+                <Kpi label="MER" value={ads.total.spend ? fmtX(ads.mer) : "—"} delta={delta(ads.mer, prevAdsMer)} accent sub={<span>receita ÷ gasto</span>} />
+                <Kpi label="ROAS atribuído" value={ads.total.purchases ? fmtX(ads.total.roas) : "—"} delta={delta(ads.total.roas, ads.prev.roas)} sub={<span>{fmtNum(ads.total.purchases)} compras · {fmtBRL(ads.total.revenue)}</span>} />
+                <Kpi label="Custo por pedido" value={cur.orders ? fmtBRL(ads.cac) : "—"} delta={delta(ads.cac, ads.prev.spend && prev.orders ? ads.prev.spend / prev.orders : 0)} invert sub={<span>gasto ÷ pedidos da loja</span>} />
+                <Kpi label="Campanhas ativas" value={String(ads.activeCampaigns)} sub={<span>CTR {fmtPct(ads.total.ctr)} · CPC {fmtBRLCents(ads.total.cpc)}</span>} />
               </div>
-              <div className="card flex flex-col p-5 lg:col-span-2">
-                <h3 className="text-base font-normal text-ink">Melhor campanha</h3>
-                <p className="mt-1 text-xs text-muted">maior ROAS entre campanhas com pelo menos {fmtBRL(settings.bestCampaignMinSpend)} gastos</p>
-                {ads.best ? (
-                  <div className="mt-6 flex flex-1 flex-col justify-between gap-6">
-                    <div>
-                      <div className="flex items-center gap-2 text-xs text-muted"><span aria-hidden className={`inline-block h-2.5 w-2.5 rounded-[2px] ${ads.best.platform === "meta" ? "bg-blue" : "bg-gold"}`} />{ads.best.platform === "meta" ? "Meta" : "Google"}</div>
-                      <div className="mt-1 text-xl font-normal text-ink">{ads.best.name}</div>
-                    </div>
-                    <div className="numeral text-[56px] text-gold-light">{fmtX(ads.best.roas)}</div>
-                    <dl className="grid grid-cols-3 gap-3 text-sm">
-                      <div><dt className="text-xs text-subtle">Gasto</dt><dd className="text-ink">{fmtBRL(ads.best.spend)}</dd></div>
-                      <div><dt className="text-xs text-subtle">Compras</dt><dd className="text-ink">{fmtNum(ads.best.purchases)}</dd></div>
-                      <div><dt className="text-xs text-subtle">Receita</dt><dd className="text-ink">{fmtBRL(ads.best.revenue)}</dd></div>
-                    </dl>
+
+              <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-5">
+                <div className="card p-5 lg:col-span-3">
+                  <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 className="text-base font-normal text-ink">Gasto por dia</h3>
+                    <ul className="flex items-center gap-4 text-xs text-muted" aria-label="Legenda">
+                      <li className="flex items-center gap-2"><span aria-hidden className="inline-block h-2.5 w-2.5 rounded-[2px] bg-blue" />Meta</li>
+                      <li className="flex items-center gap-2"><span aria-hidden className="inline-block h-2.5 w-2.5 rounded-[2px] bg-gold" />Google</li>
+                    </ul>
                   </div>
-                ) : <p className="mt-6 text-sm text-muted">Nenhuma campanha com compras rastreadas no período.</p>}
+                  <SpendChart data={ads.daily} />
+                </div>
+                <div className="card flex flex-col p-5 lg:col-span-2">
+                  <h3 className="text-base font-normal text-ink">Melhor campanha</h3>
+                  <p className="mt-1 text-xs text-muted">maior ROAS entre campanhas com pelo menos {fmtBRL(settings.bestCampaignMinSpend)} gastos</p>
+                  {ads.best ? (
+                    <div className="mt-6 flex flex-1 flex-col justify-between gap-6">
+                      <div>
+                        <div className="flex items-center gap-2 text-xs text-muted"><span aria-hidden className={`inline-block h-2.5 w-2.5 rounded-[2px] ${ads.best.platform === "meta" ? "bg-blue" : "bg-gold"}`} />{ads.best.platform === "meta" ? "Meta" : "Google"}</div>
+                        <div className="mt-1 text-xl font-normal text-ink">{ads.best.name}</div>
+                      </div>
+                      <div className="numeral text-[56px] text-gold-light">{fmtX(ads.best.roas)}</div>
+                      <dl className="grid grid-cols-3 gap-3 text-sm">
+                        <div><dt className="text-xs text-subtle">Gasto</dt><dd className="text-ink">{fmtBRL(ads.best.spend)}</dd></div>
+                        <div><dt className="text-xs text-subtle">Compras</dt><dd className="text-ink">{fmtNum(ads.best.purchases)}</dd></div>
+                        <div><dt className="text-xs text-subtle">Receita</dt><dd className="text-ink">{fmtBRL(ads.best.revenue)}</dd></div>
+                      </dl>
+                    </div>
+                  ) : <p className="mt-6 text-sm text-muted">Nenhuma campanha com compras rastreadas no período.</p>}
+                </div>
               </div>
-            </div>
 
-            <div className="mt-3">
-              <CampaignsTable rows={ads.campaigns} bestId={ads.best?.id} />
-            </div>
-          </Section>
+              <div className="mt-3">
+                <CampaignsTable rows={ads.campaigns} bestId={ads.best?.id} />
+              </div>
+            </Section>
 
-          {/* ------------------------------------------------ MATRIZ DO MODELO */}
-          <Section
-            id="matriz"
-            title="Matriz do modelo"
-            description="Vendas, estoque e mídia lado a lado, por relógio. Campanhas são ligadas ao modelo pelo nome; pedidos são ligados à campanha pela UTM da visita que converteu. Os sinais apontam onde há uma decisão a tomar."
-          >
-            <ModelMatrix matrix={matrix} highlight={f.model} />
-          </Section>
+            {/* ------------------------------------------------ MATRIZ DO MODELO */}
+            <Section
+              id="matriz"
+              title="Matriz do modelo"
+              description="Vendas, estoque e mídia lado a lado, por relógio. Campanhas são ligadas ao modelo pelo nome; pedidos são ligados à campanha pela UTM da visita que converteu. Os sinais apontam onde há uma decisão a tomar."
+            >
+              <ModelMatrix matrix={matrix} highlight={f.model} />
+            </Section>
+            </>
+          )}
         </div>
       </main>
 

@@ -3,7 +3,7 @@ import { campaignTargets, catalog, type Collection } from "@/lib/catalog";
 import { settings } from "@/lib/settings";
 import { seeded } from "@/lib/random";
 import { mockCampaigns } from "@/lib/sources/ads/mock";
-import type { CustomerJourneySummary, MoneyBag, ShopifyAbandonedCheckout, ShopifyOrder } from "./types";
+import type { CustomerJourneySummary, MoneyBag, SessionDaily, ShopifyAbandonedCheckout, ShopifyOrder } from "./types";
 
 const money = (n: number): MoneyBag => ({ shopMoney: { amount: n.toFixed(2), currencyCode: "BRL" } });
 
@@ -122,6 +122,19 @@ export function generateOrders(today: Date, days = 260): ShopifyOrder[] {
     }
   }
   return orders;
+}
+
+/** Sessões por dia (o que o ShopifyQL devolve), com o mesmo fim de semana fraco dos pedidos. */
+export function generateSessions(today: Date, days = 120): SessionDaily[] {
+  const r = seeded(31337);
+  const out: SessionDaily[] = [];
+  for (let d = days; d >= 0; d--) {
+    const day = addDays(today, -d);
+    const weekend = day.getDay() === 0 || day.getDay() === 6;
+    const base = 240 + (weekend ? -60 : 0) + (day.getMonth() === 7 ? 90 : 0);
+    out.push({ date: formatISO(day, { representation: "date" }), sessions: Math.max(0, Math.round(base + (r.next() - 0.5) * 120)) });
+  }
+  return out;
 }
 
 export function generateAbandonedCheckouts(today: Date, days = 60): ShopifyAbandonedCheckout[] {
